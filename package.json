@@ -17,6 +17,7 @@
     "@types/papaparse": "^5.5.2",
     "@types/react": "^19.2.10",
     "autoprefixer": "^10.4.24",
+    "jszip": "^3.10.1",
     "next": "^16.1.6",
     "papaparse": "^5.5.3",
     "postcss": "^8.5.6",

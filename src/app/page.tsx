@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { CsvUploader } from "@/components/CsvUploader";
+import { TickerInput } from "@/components/TickerInput";
 import { PortfolioSummary } from "@/components/PortfolioSummary";
-import { MemeDisplay } from "@/components/MemeDisplay";
-import { HoldingCard } from "@/components/HoldingCard";
+import { MemeEditor } from "@/components/MemeEditor";
+import { MemeGallery } from "@/components/MemeGallery";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import { calculatePortfolioSummary } from "@/lib/portfolio";
 import type { PortfolioRow, PortfolioSummary as Summary } from "@/types/portfolio";
@@ -18,13 +19,17 @@ const samplePortfolio: PortfolioRow[] = [
   { ticker: "AMD", shares: 20, purchasePrice: 95, currentPrice: 158 },
 ];
 
+type InputMode = "none" | "csv" | "ticker";
+
 export default function Home() {
+  const [inputMode, setInputMode] = useState<InputMode>("none");
   const [portfolioData, setPortfolioData] = useState<PortfolioRow[] | null>(null);
   const [summary, setSummary] = useState<Summary | null>(null);
 
   const handleUpload = (rows: PortfolioRow[]) => {
     setPortfolioData(rows);
     setSummary(calculatePortfolioSummary(rows));
+    setInputMode("none");
   };
 
   const handleSampleData = () => {
@@ -34,6 +39,7 @@ export default function Home() {
   const handleReset = () => {
     setPortfolioData(null);
     setSummary(null);
+    setInputMode("none");
   };
 
   return (
@@ -44,37 +50,93 @@ export default function Home() {
             Portfolio Meme Rater
           </h1>
           <p className="text-gray-400">
-            Upload your portfolio and get memes for each holding
+            Turn your gains (or losses) into memes
           </p>
         </header>
 
         {!portfolioData ? (
           <div className="space-y-4">
-            <CsvUploader onUpload={handleUpload} />
-            <div className="text-center">
-              <span className="text-gray-500 text-sm">or</span>
-            </div>
-            <button
-              onClick={handleSampleData}
-              className="w-full py-3 px-4 bg-gray-700 hover:bg-gray-600 rounded-lg font-medium transition-colors"
-            >
-              Try with Sample Portfolio
-            </button>
+            {inputMode === "none" && (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <button
+                    onClick={() => setInputMode("ticker")}
+                    className="p-6 bg-gray-800 hover:bg-gray-700 rounded-lg text-left transition-colors"
+                  >
+                    <div className="text-2xl mb-2">📈</div>
+                    <h3 className="font-bold mb-1">Enter Tickers</h3>
+                    <p className="text-sm text-gray-400">
+                      Auto-fetch live prices from the market
+                    </p>
+                  </button>
+                  <button
+                    onClick={() => setInputMode("csv")}
+                    className="p-6 bg-gray-800 hover:bg-gray-700 rounded-lg text-left transition-colors"
+                  >
+                    <div className="text-2xl mb-2">📄</div>
+                    <h3 className="font-bold mb-1">Upload CSV</h3>
+                    <p className="text-sm text-gray-400">
+                      Import from spreadsheet with custom prices
+                    </p>
+                  </button>
+                </div>
+                <button
+                  onClick={handleSampleData}
+                  className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium transition-colors"
+                >
+                  Try Demo Portfolio
+                </button>
+              </>
+            )}
+
+            {inputMode === "ticker" && (
+              <div className="space-y-4">
+                <button
+                  onClick={() => setInputMode("none")}
+                  className="text-sm text-gray-400 hover:text-white transition-colors"
+                >
+                  ← Back
+                </button>
+                <TickerInput onSubmit={handleUpload} />
+              </div>
+            )}
+
+            {inputMode === "csv" && (
+              <div className="space-y-4">
+                <button
+                  onClick={() => setInputMode("none")}
+                  className="text-sm text-gray-400 hover:text-white transition-colors"
+                >
+                  ← Back
+                </button>
+                <CsvUploader onUpload={handleUpload} />
+              </div>
+            )}
           </div>
         ) : (
           <div className="space-y-6">
             {summary && (
               <>
                 <PortfolioSummary summary={summary} />
-                <MemeDisplay percentageReturn={summary.percentageReturn} />
 
+                {/* Overall Portfolio Meme with Editor */}
+                <MemeEditor percentageReturn={summary.percentageReturn} />
+
+                {/* Export Options */}
+                <MemeGallery summary={summary} />
+
+                {/* Individual Holdings */}
                 <div className="space-y-4">
                   <h2 className="text-xl font-bold">Individual Holdings</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {summary.holdings
                       .sort((a, b) => b.percentageGain - a.percentageGain)
                       .map((holding) => (
-                        <HoldingCard key={holding.ticker} holding={holding} />
+                        <MemeEditor
+                          key={holding.ticker}
+                          percentageReturn={holding.percentageGain}
+                          ticker={holding.ticker}
+                        />
                       ))}
                   </div>
                 </div>
@@ -85,7 +147,7 @@ export default function Home() {
               onClick={handleReset}
               className="w-full py-2 px-4 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm transition-colors"
             >
-              Upload Different Portfolio
+              Start Over
             </button>
           </div>
         )}
