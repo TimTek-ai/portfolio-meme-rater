@@ -1,0 +1,383 @@
+import type { MemeTemplate } from "@/types/portfolio";
+
+// Meme templates based on portfolio performance
+export const memeTemplates: MemeTemplate[] = [
+  // Massive gains (100%+)
+  {
+    id: "181913649",
+    name: "Drake Approves",
+    url: "https://i.imgflip.com/30b1gx.jpg",
+    minReturn: 100,
+    maxReturn: Infinity,
+    topText: "Wage slavery",
+    bottomText: "{return} on {ticker}",
+  },
+  {
+    id: "252600902",
+    name: "Always Has Been",
+    url: "https://i.imgflip.com/46e43q.png",
+    minReturn: 100,
+    maxReturn: Infinity,
+    topText: "Wait, I'm rich?",
+    bottomText: "Always have been ({ticker} {return})",
+  },
+  {
+    id: "309868304",
+    name: "Trade Offer",
+    url: "https://i.imgflip.com/54hjww.jpg",
+    minReturn: 100,
+    maxReturn: Infinity,
+    topText: "I receive: {return} gains",
+    bottomText: "You receive: my gratitude {ticker}",
+  },
+  {
+    id: "222403160",
+    name: "Bernie Asking",
+    url: "https://i.imgflip.com/3oevdk.jpg",
+    minReturn: 100,
+    maxReturn: Infinity,
+    topText: "I am once again asking",
+    bottomText: "{ticker} to keep printing ({return})",
+  },
+
+  // Huge gains (50-100%)
+  {
+    id: "217743513",
+    name: "UNO Draw 25",
+    url: "https://i.imgflip.com/3lmzyx.jpg",
+    minReturn: 50,
+    maxReturn: 100,
+    topText: "Sell {ticker} at {return}",
+    bottomText: "or draw 25",
+  },
+  {
+    id: "135256802",
+    name: "Epic Handshake",
+    url: "https://i.imgflip.com/28j0te.jpg",
+    minReturn: 50,
+    maxReturn: 100,
+    topText: "Me and {ticker}",
+    bottomText: "Printing money together ({return})",
+  },
+  {
+    id: "131940431",
+    name: "Gru's Plan",
+    url: "https://i.imgflip.com/26jxvz.jpg",
+    minReturn: 50,
+    maxReturn: 100,
+    topText: "Buy {ticker}",
+    bottomText: "It goes up {return}",
+  },
+  {
+    id: "161865971",
+    name: "Marked Safe",
+    url: "https://i.imgflip.com/2odckz.jpg",
+    minReturn: 50,
+    maxReturn: 100,
+    topText: "Marked safe from",
+    bottomText: "Being poor ({ticker} {return})",
+  },
+
+  // Great gains (20-50%)
+  {
+    id: "87743020",
+    name: "Two Buttons",
+    url: "https://i.imgflip.com/1g8my4.jpg",
+    minReturn: 20,
+    maxReturn: 50,
+    topText: "Take {return} profit",
+    bottomText: "Diamond hands {ticker}",
+  },
+  {
+    id: "129242436",
+    name: "Change My Mind",
+    url: "https://i.imgflip.com/24y43o.jpg",
+    minReturn: 20,
+    maxReturn: 50,
+    topText: "{ticker} at {return} is",
+    bottomText: "The way",
+  },
+  {
+    id: "112126428",
+    name: "Distracted Boyfriend",
+    url: "https://i.imgflip.com/1ur9b0.jpg",
+    minReturn: 20,
+    maxReturn: 50,
+    topText: "Me looking at {ticker}",
+    bottomText: "{return} gains",
+  },
+  {
+    id: "131087935",
+    name: "Running Away Balloon",
+    url: "https://i.imgflip.com/261o3j.jpg",
+    minReturn: 20,
+    maxReturn: 50,
+    topText: "My worries",
+    bottomText: "{ticker} at {return}",
+  },
+
+  // Decent gains (10-20%)
+  {
+    id: "102156234",
+    name: "Mocking Spongebob",
+    url: "https://i.imgflip.com/1otk96.jpg",
+    minReturn: 10,
+    maxReturn: 20,
+    topText: "I'm a trader",
+    bottomText: "uP {return} oN {ticker}",
+  },
+  {
+    id: "124822590",
+    name: "Left Exit 12",
+    url: "https://i.imgflip.com/22bdq6.jpg",
+    minReturn: 10,
+    maxReturn: 20,
+    topText: "Savings account",
+    bottomText: "{ticker} at {return}",
+  },
+  {
+    id: "322841258",
+    name: "Anakin Padme",
+    url: "https://i.imgflip.com/5c7lwq.png",
+    minReturn: 10,
+    maxReturn: 20,
+    topText: "{ticker} is up {return}",
+    bottomText: "Time to buy more right?",
+  },
+
+  // Small gains (5-10%)
+  {
+    id: "188390779",
+    name: "Woman Yelling at Cat",
+    url: "https://i.imgflip.com/345v97.jpg",
+    minReturn: 5,
+    maxReturn: 10,
+    topText: "It's only {return}!",
+    bottomText: "{ticker} gains are gains",
+  },
+  {
+    id: "91538330",
+    name: "X All The Y",
+    url: "https://i.imgflip.com/1ihzfe.jpg",
+    minReturn: 5,
+    maxReturn: 10,
+    topText: "Celebrate",
+    bottomText: "All the {return} {ticker} gains",
+  },
+
+  // Tiny gains (0-5%)
+  {
+    id: "61532",
+    name: "Kermit Tea",
+    url: "https://i.imgflip.com/gk5el.jpg",
+    minReturn: 0,
+    maxReturn: 5,
+    topText: "{ticker} up {return}",
+    bottomText: "But that's none of my business",
+  },
+  {
+    id: "27813981",
+    name: "Hide the Pain Harold",
+    url: "https://i.imgflip.com/gk5el.jpg",
+    minReturn: 0,
+    maxReturn: 5,
+    topText: "When {ticker} is only up {return}",
+    bottomText: "But you tell everyone you're winning",
+  },
+  {
+    id: "101470",
+    name: "Ancient Aliens",
+    url: "https://i.imgflip.com/26am.jpg",
+    minReturn: 0,
+    maxReturn: 5,
+    topText: "{ticker} {return}",
+    bottomText: "Gains",
+  },
+
+  // Small losses (0 to -10%)
+  {
+    id: "4087833",
+    name: "Waiting Skeleton",
+    url: "https://i.imgflip.com/2fm6x.jpg",
+    minReturn: -10,
+    maxReturn: 0,
+    topText: "Waiting for {ticker}",
+    bottomText: "To recover from {return}",
+  },
+  {
+    id: "61520",
+    name: "Futurama Fry",
+    url: "https://i.imgflip.com/1bgw.jpg",
+    minReturn: -10,
+    maxReturn: 0,
+    topText: "Not sure if bad at investing",
+    bottomText: "Or {ticker} just needs time ({return})",
+  },
+  {
+    id: "61544",
+    name: "Success Kid",
+    url: "https://i.imgflip.com/1bhk.jpg",
+    minReturn: -10,
+    maxReturn: 0,
+    topText: "{ticker} only down {return}",
+    bottomText: "Could be worse",
+  },
+  {
+    id: "101288",
+    name: "Third World Skeptical Kid",
+    url: "https://i.imgflip.com/265k.jpg",
+    minReturn: -10,
+    maxReturn: 0,
+    topText: "So you're telling me",
+    bottomText: "{ticker} will recover from {return}?",
+  },
+
+  // Medium losses (-10% to -25%)
+  {
+    id: "80707627",
+    name: "Sad Pablo Escobar",
+    url: "https://i.imgflip.com/1c1uej.jpg",
+    minReturn: -25,
+    maxReturn: -10,
+    topText: "Me watching {ticker}",
+    bottomText: "Go down {return}",
+  },
+  {
+    id: "97984",
+    name: "Disaster Girl",
+    url: "https://i.imgflip.com/23ls.jpg",
+    minReturn: -25,
+    maxReturn: -10,
+    topText: "My portfolio",
+    bottomText: "{ticker} {return}",
+  },
+  {
+    id: "61546",
+    name: "Brace Yourselves",
+    url: "https://i.imgflip.com/1bh8.jpg",
+    minReturn: -25,
+    maxReturn: -10,
+    topText: "Brace yourselves",
+    bottomText: "{ticker} dipping {return}",
+  },
+  {
+    id: "28251713",
+    name: "Oprah",
+    url: "https://i.imgflip.com/pfk3k.jpg",
+    minReturn: -25,
+    maxReturn: -10,
+    topText: "You get {return} loss",
+    bottomText: "Everyone holding {ticker} gets losses!",
+  },
+
+  // Big losses (-25% to -50%)
+  {
+    id: "438680",
+    name: "Batman Slaps",
+    url: "https://i.imgflip.com/9ehk.jpg",
+    minReturn: -50,
+    maxReturn: -25,
+    topText: "I should average down on {ticker}",
+    bottomText: "You're down {return} stop!",
+  },
+  {
+    id: "124055727",
+    name: "Y'all Got Any More",
+    url: "https://i.imgflip.com/21uy0f.jpg",
+    minReturn: -50,
+    maxReturn: -25,
+    topText: "Y'all got any more",
+    bottomText: "{ticker} copium? ({return})",
+  },
+  {
+    id: "89370399",
+    name: "Roll Safe",
+    url: "https://i.imgflip.com/1h7in3.jpg",
+    minReturn: -50,
+    maxReturn: -25,
+    topText: "Can't lose more on {ticker}",
+    bottomText: "If you never sell ({return})",
+  },
+  {
+    id: "61580",
+    name: "Too Damn High",
+    url: "https://i.imgflip.com/1bik.jpg",
+    minReturn: -50,
+    maxReturn: -25,
+    topText: "The {ticker} losses",
+    bottomText: "Are too damn high! ({return})",
+  },
+
+  // Massive losses (-50%+)
+  {
+    id: "259237855",
+    name: "Laughing Leo",
+    url: "https://i.imgflip.com/3pnmg.jpg",
+    minReturn: -75,
+    maxReturn: -50,
+    topText: "Me explaining to my wife",
+    bottomText: "Why {ticker} is down {return}",
+  },
+  {
+    id: "61539",
+    name: "First World Problems",
+    url: "https://i.imgflip.com/1bh3.jpg",
+    minReturn: -75,
+    maxReturn: -50,
+    topText: "Bought {ticker}",
+    bottomText: "Now down {return}",
+  },
+  {
+    id: "61527",
+    name: "Y U No",
+    url: "https://i.imgflip.com/1b9t.jpg",
+    minReturn: -Infinity,
+    maxReturn: -75,
+    topText: "{ticker}",
+    bottomText: "Y U no go up?! ({return})",
+  },
+  {
+    id: "21735",
+    name: "Picard Facepalm",
+    url: "https://i.imgflip.com/1bi.jpg",
+    minReturn: -Infinity,
+    maxReturn: -75,
+    topText: "When you check {ticker}",
+    bottomText: "And it's {return}",
+  },
+  {
+    id: "196652226",
+    name: "Spongebob Fire",
+    url: "https://i.imgflip.com/33e92f.jpg",
+    minReturn: -Infinity,
+    maxReturn: -75,
+    topText: "{ticker} down {return}",
+    bottomText: "This is fine",
+  },
+];
+
+export function selectMemeTemplate(percentageReturn: number): MemeTemplate {
+  const matchingTemplates = memeTemplates.filter(
+    (t) => percentageReturn >= t.minReturn && percentageReturn < t.maxReturn
+  );
+
+  if (matchingTemplates.length > 0) {
+    const randomIndex = Math.floor(Math.random() * matchingTemplates.length);
+    return matchingTemplates[randomIndex];
+  }
+
+  return memeTemplates[memeTemplates.length - 1];
+}
+
+export function formatMemeText(text: string, percentageReturn: number, ticker?: string): string {
+  const returnStr = percentageReturn >= 0
+    ? `+${percentageReturn.toFixed(1)}%`
+    : `${percentageReturn.toFixed(1)}%`;
+  return text
+    .replace("{return}", returnStr)
+    .replace("{ticker}", ticker || "my portfolio");
+}
+
+export function getMemeImageUrl(template: MemeTemplate): string {
+  return `/api/meme-image?url=${encodeURIComponent(template.url)}`;
+}
