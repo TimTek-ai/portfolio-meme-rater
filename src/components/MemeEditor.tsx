@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { selectMemeTemplate, formatMemeText, getMemeImageUrl, memeTemplates } from "@/lib/imgflip";
 import { downloadMeme, renderMemeToCanvas } from "@/lib/memeRenderer";
 import { useToast } from "@/components/Toast";
@@ -13,6 +13,36 @@ interface MemeEditorProps {
   onShare?: (text: string) => void;
 }
 
+// Custom meme storage
+const CUSTOM_MEMES_KEY = "portfolioMemer_customMemes";
+
+interface CustomMeme {
+  id: string;
+  name: string;
+  dataUrl: string;
+  createdAt: number;
+}
+
+function getCustomMemes(): CustomMeme[] {
+  if (typeof window === "undefined") return [];
+  const stored = localStorage.getItem(CUSTOM_MEMES_KEY);
+  return stored ? JSON.parse(stored) : [];
+}
+
+function saveCustomMeme(meme: CustomMeme): void {
+  const memes = getCustomMemes();
+  memes.unshift(meme); // Add to beginning
+  // Keep only last 20 custom memes to avoid storage issues
+  const trimmed = memes.slice(0, 20);
+  localStorage.setItem(CUSTOM_MEMES_KEY, JSON.stringify(trimmed));
+}
+
+function deleteCustomMeme(id: string): void {
+  const memes = getCustomMemes();
+  const filtered = memes.filter((m) => m.id !== id);
+  localStorage.setItem(CUSTOM_MEMES_KEY, JSON.stringify(filtered));
+}
+
 export function MemeEditor({ percentageReturn, ticker }: MemeEditorProps) {
   const [template, setTemplate] = useState<MemeTemplate>(() => selectMemeTemplate(percentageReturn));
   const [topText, setTopText] = useState("");
@@ -20,14 +50,95 @@ export function MemeEditor({ percentageReturn, ticker }: MemeEditorProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
   const [canShare, setCanShare] = useState(false);
+  const [customMemes, setCustomMemes] = useState<CustomMeme[]>([]);
+  const [customImageUrl, setCustomImageUrl] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { showToast } = useToast();
 
-  // Check if Web Share API is available (must be done client-side)
+  // Check if Web Share API is available and load custom memes
   useEffect(() => {
     setCanShare(typeof navigator !== "undefined" && !!navigator.share);
+    setCustomMemes(getCustomMemes());
   }, []);
 
-  const imageUrl = getMemeImageUrl(template);
+  // Use custom image URL if set, otherwise use template
+  const imageUrl = customImageUrl || getMemeImageUrl(template);
+
+  // Handle file upload
+  const handleFileUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      showToast("Please upload an image file", "error");
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      showToast("Image must be under 5MB", "error");
+      return;
+    }
+
+    setIsUploading(true);
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const dataUrl = event.target?.result as string;
+
+      // Create and save custom meme
+      const customMeme: CustomMeme = {
+        id: crypto.randomUUID(),
+        name: file.name.replace(/\.[^/.]+$/, "").slice(0, 20),
+        dataUrl,
+        createdAt: Date.now(),
+      };
+
+      saveCustomMeme(customMeme);
+      setCustomMemes(getCustomMemes());
+      setCustomImageUrl(dataUrl);
+      setImageLoaded(false);
+      setIsUploading(false);
+      showToast("Custom meme uploaded!", "success");
+    };
+
+    reader.onerror = () => {
+      setIsUploading(false);
+      showToast("Failed to upload image", "error");
+    };
+
+    reader.readAsDataURL(file);
+
+    // Reset input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  }, [showToast]);
+
+  // Select a custom meme
+  const handleSelectCustomMeme = useCallback((meme: CustomMeme) => {
+    setCustomImageUrl(meme.dataUrl);
+    setImageLoaded(false);
+    setShowTemplates(false);
+  }, []);
+
+  // Delete a custom meme
+  const handleDeleteCustomMeme = useCallback((id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    deleteCustomMeme(id);
+    setCustomMemes(getCustomMemes());
+    showToast("Custom meme deleted", "success");
+  }, [showToast]);
+
+  // Switch back to template
+  const handleSelectTemplate = (t: MemeTemplate) => {
+    setTemplate(t);
+    setCustomImageUrl(null);
+    setImageLoaded(false);
+    setShowTemplates(false);
+  };
 
   // Update text when template changes
   useEffect(() => {
@@ -37,13 +148,8 @@ export function MemeEditor({ percentageReturn, ticker }: MemeEditorProps) {
 
   const handleRandomTemplate = () => {
     setTemplate(selectMemeTemplate(percentageReturn));
+    setCustomImageUrl(null);
     setImageLoaded(false);
-  };
-
-  const handleSelectTemplate = (t: MemeTemplate) => {
-    setTemplate(t);
-    setImageLoaded(false);
-    setShowTemplates(false);
   };
 
   const handleDownload = useCallback(async (format: "standard" | "tiktok" = "standard") => {
@@ -201,8 +307,18 @@ export function MemeEditor({ percentageReturn, ticker }: MemeEditorProps) {
           onClick={() => setShowTemplates(true)}
           className="flex-1 py-2 px-3 bg-gray-700/50 hover:bg-gray-600/50 rounded-lg text-sm transition-all border border-gray-600 hover:border-gray-500"
         >
-          🖼️ Browse Templates
+          🖼️ Browse
         </button>
+        <label className="flex-1 py-2 px-3 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 rounded-lg text-sm transition-all cursor-pointer text-center font-medium">
+          {isUploading ? "⏳" : "📤"} Upload
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFileUpload}
+            className="hidden"
+          />
+        </label>
       </div>
 
       {/* Template Modal */}
@@ -220,6 +336,72 @@ export function MemeEditor({ percentageReturn, ticker }: MemeEditorProps) {
             </div>
 
             <div className="overflow-y-auto flex-1 space-y-4">
+              {/* Custom Memes Section */}
+              {customMemes.length > 0 && (
+                <div>
+                  <h4 className="text-sm font-medium text-purple-400 mb-2 flex items-center gap-2">
+                    <span className="w-2 h-2 bg-purple-400 rounded-full"></span>
+                    Your Custom Memes
+                  </h4>
+                  <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
+                    {customMemes.map((meme) => (
+                      <button
+                        key={meme.id}
+                        onClick={() => handleSelectCustomMeme(meme)}
+                        className={`template-item p-1 border-2 transition-all relative group ${
+                          customImageUrl === meme.dataUrl ? "border-purple-500" : "border-transparent hover:border-gray-500"
+                        }`}
+                        title={meme.name}
+                      >
+                        <img
+                          src={meme.dataUrl}
+                          alt={meme.name}
+                          className="w-full aspect-square object-cover rounded"
+                        />
+                        {/* Delete button */}
+                        <button
+                          onClick={(e) => handleDeleteCustomMeme(meme.id, e)}
+                          className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 hover:bg-red-400 rounded-full text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+                          title="Delete"
+                        >
+                          ×
+                        </button>
+                      </button>
+                    ))}
+                    {/* Upload more button */}
+                    <label className="template-item p-1 border-2 border-dashed border-gray-600 hover:border-purple-500 transition-all cursor-pointer flex items-center justify-center aspect-square rounded">
+                      <div className="text-center text-gray-400 hover:text-purple-400 transition-colors">
+                        <div className="text-2xl">+</div>
+                        <div className="text-[10px]">Upload</div>
+                      </div>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileUpload}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {/* Upload prompt if no custom memes */}
+              {customMemes.length === 0 && (
+                <div className="border-2 border-dashed border-gray-600 rounded-xl p-6 text-center">
+                  <div className="text-4xl mb-2">📤</div>
+                  <p className="text-gray-400 mb-3">Upload your own meme templates</p>
+                  <label className="inline-block py-2 px-4 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 rounded-lg text-sm font-medium cursor-pointer transition-all">
+                    Choose Image
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileUpload}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+              )}
+
               {/* Gains Templates */}
               <div>
                 <h4 className="text-sm font-medium text-green-400 mb-2 flex items-center gap-2">
