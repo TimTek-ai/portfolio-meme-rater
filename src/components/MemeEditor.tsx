@@ -46,19 +46,33 @@ export function MemeEditor({ percentageReturn, ticker }: MemeEditorProps) {
     setShowTemplates(false);
   };
 
-  const handleDownload = useCallback(async () => {
-    await downloadMeme(imageUrl, { topText, bottomText }, `${ticker || "portfolio"}-meme.png`);
-    showToast("Meme downloaded!", "success");
-  }, [imageUrl, topText, bottomText, ticker, showToast]);
+  const handleDownload = useCallback(async (format: "standard" | "tiktok" = "standard") => {
+    await downloadMeme(
+      imageUrl,
+      {
+        topText,
+        bottomText,
+        format,
+        portfolioStats: { percentageReturn, ticker },
+      },
+      `${ticker || "portfolio"}-meme${format === "tiktok" ? "-tiktok" : ""}.png`
+    );
+    showToast(`${format === "tiktok" ? "TikTok" : "Meme"} downloaded!`, "success");
+  }, [imageUrl, topText, bottomText, percentageReturn, ticker, showToast]);
 
   const handleShare = useCallback(async (platform: "twitter" | "reddit" | "copy" | "native") => {
-    const text = `${topText} - ${bottomText}`;
+    const emoji = percentageReturn >= 0 ? "📈" : "📉";
+    const direction = percentageReturn >= 0 ? "up" : "down";
+    const hashtags = percentageReturn >= 0
+      ? "#Stonks #WallStreetBets #Gains"
+      : "#LossPorn #WallStreetBets #DiamondHands";
+    const shareText = `${topText} - ${bottomText}\n\n${emoji} My ${ticker || "portfolio"} is ${direction} ${Math.abs(percentageReturn).toFixed(1)}%!\n\nMade with portfoliomemer.app ${hashtags}`;
 
     if (platform === "twitter") {
-      window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
+      window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`, "_blank");
     } else if (platform === "reddit") {
-      const title = encodeURIComponent(text);
-      window.open(`https://www.reddit.com/submit?title=${title}`, "_blank");
+      const redditTitle = `${topText} - ${bottomText} [${percentageReturn >= 0 ? "+" : ""}${percentageReturn.toFixed(1)}%]`;
+      window.open(`https://www.reddit.com/r/wallstreetbets/submit?title=${encodeURIComponent(redditTitle)}`, "_blank");
     } else if (platform === "native") {
       // Use Web Share API for native sharing (with image if supported)
       if (navigator.share) {
@@ -93,10 +107,10 @@ export function MemeEditor({ percentageReturn, ticker }: MemeEditorProps) {
         showToast("Web Share not supported", "error");
       }
     } else {
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(shareText);
       showToast("Copied to clipboard!", "success");
     }
-  }, [topText, bottomText, imageUrl, ticker, showToast]);
+  }, [topText, bottomText, imageUrl, ticker, percentageReturn, showToast]);
 
   // Group templates by performance tier
   const groupedTemplates = {
@@ -297,10 +311,17 @@ export function MemeEditor({ percentageReturn, ticker }: MemeEditorProps) {
       {/* Action Buttons */}
       <div className="flex gap-2 flex-wrap">
         <button
-          onClick={handleDownload}
+          onClick={() => handleDownload("standard")}
           className="flex-1 py-2 px-3 btn-success rounded-lg text-sm font-medium transition-all min-w-[80px]"
         >
           Download
+        </button>
+        <button
+          onClick={() => handleDownload("tiktok")}
+          className="py-2 px-3 bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-400 hover:to-purple-400 rounded-lg text-sm font-medium transition-all"
+          title="Download TikTok/Reels format (9:16)"
+        >
+          TikTok
         </button>
         <button
           onClick={() => handleShare("twitter")}

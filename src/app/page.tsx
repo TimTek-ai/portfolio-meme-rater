@@ -9,6 +9,8 @@ import { MemeGallery } from "@/components/MemeGallery";
 import { SavedPortfolios } from "@/components/SavedPortfolios";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import { useToast } from "@/components/Toast";
+import { RoastDisplay } from "@/components/RoastDisplay";
+import { Leaderboard } from "@/components/Leaderboard";
 import { calculatePortfolioSummary } from "@/lib/portfolio";
 import { savePortfolio } from "@/lib/storage";
 import { useSound, SoundToggle } from "@/hooks/useSound";
@@ -334,14 +336,27 @@ export default function Home() {
                   </div>
                 )}
 
-                {/* Overall Portfolio Meme with Editor */}
+                {/* Roast My Portfolio */}
                 <div className="animate-slideUp" style={{ animationDelay: "100ms" }}>
+                  <RoastDisplay percentageReturn={summary.percentageReturn} />
+                </div>
+
+                {/* Overall Portfolio Meme with Editor */}
+                <div className="animate-slideUp" style={{ animationDelay: "150ms" }}>
                   <MemeEditor percentageReturn={summary.percentageReturn} />
                 </div>
 
                 {/* Export Options */}
-                <div className="animate-slideUp" style={{ animationDelay: "150ms" }}>
+                <div className="animate-slideUp" style={{ animationDelay: "200ms" }}>
                   <MemeGallery summary={summary} />
+                </div>
+
+                {/* Hall of Shame Leaderboard */}
+                <div className="animate-slideUp" style={{ animationDelay: "250ms" }}>
+                  <Leaderboard
+                    currentReturn={summary.percentageReturn}
+                    currentTicker={summary.holdings.length === 1 ? summary.holdings[0].ticker : undefined}
+                  />
                 </div>
 
                 {/* Individual Holdings */}

@@ -515,3 +515,19 @@ input:focus, button:focus-visible {
   stroke-linecap: round;
   transition: stroke-dasharray 0.5s ease;
 }
+
+/* Pulse border animation */
+@keyframes pulse-border {
+  0%, 100% {
+    border-color: rgba(239, 68, 68, 0.3);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+  }
+  50% {
+    border-color: rgba(239, 68, 68, 0.8);
+    box-shadow: 0 0 20px 4px rgba(239, 68, 68, 0.3);
+  }
+}
+
+.animate-pulse-border {
+  animation: pulse-border 2s ease-in-out infinite;
+}
