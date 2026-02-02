@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Cell } from "recharts";
 import { selectMemeTemplate, formatMemeText, getMemeImageUrl } from "@/lib/imgflip";
+import { useToast } from "@/components/Toast";
 import type { HoldingSummary } from "@/types/portfolio";
 
 interface HoldingCardProps {
@@ -21,6 +22,7 @@ function formatCurrency(value: number): string {
 export function HoldingCard({ holding }: HoldingCardProps) {
   const [showMeme, setShowMeme] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const { showToast } = useToast();
 
   const template = selectMemeTemplate(holding.percentageGain);
   const topText = formatMemeText(template.topText, holding.percentageGain, holding.ticker);
@@ -42,9 +44,9 @@ export function HoldingCard({ holding }: HoldingCardProps) {
       window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
     } else {
       await navigator.clipboard.writeText(text);
-      alert("Copied to clipboard!");
+      showToast("Copied to clipboard!", "success");
     }
-  }, [holding, isPositive]);
+  }, [holding, isPositive, showToast]);
 
   return (
     <div className="bg-gray-800 rounded-lg p-4 space-y-3">

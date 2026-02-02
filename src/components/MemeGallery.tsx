@@ -144,17 +144,19 @@ export function MemeGallery({ summary }: MemeGalleryProps) {
   }, [generateMemeData]);
 
   return (
-    <div className="bg-gray-800 rounded-lg p-4 space-y-4">
-      <h3 className="font-bold">Export All Memes</h3>
-      <p className="text-sm text-gray-400">
-        Generate and download memes for your entire portfolio
-      </p>
+    <div className="card rounded-xl p-5 space-y-4">
+      <div>
+        <h3 className="font-bold text-lg">Export All Memes</h3>
+        <p className="text-sm text-gray-400 mt-1">
+          Generate and download memes for your entire portfolio
+        </p>
+      </div>
 
       {generating ? (
-        <div className="space-y-2">
-          <div className="h-2 bg-gray-700 rounded overflow-hidden">
+        <div className="space-y-3">
+          <div className="progress-bar">
             <div
-              className="h-full bg-blue-500 transition-all duration-300"
+              className="progress-fill progress-gain"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -163,18 +165,18 @@ export function MemeGallery({ summary }: MemeGalleryProps) {
           </p>
         </div>
       ) : (
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <button
             onClick={downloadAllMemes}
-            className="flex-1 py-2 px-4 bg-blue-600 hover:bg-blue-700 rounded text-sm font-medium transition-colors"
+            className="flex-1 py-3 px-4 btn-primary rounded-lg text-sm font-medium transition-all"
           >
-            Download ZIP
+            📦 Download ZIP
           </button>
           <button
             onClick={downloadAsGrid}
-            className="flex-1 py-2 px-4 bg-green-600 hover:bg-green-700 rounded text-sm font-medium transition-colors"
+            className="flex-1 py-3 px-4 btn-success rounded-lg text-sm font-medium transition-all"
           >
-            Download Grid Image
+            🖼️ Download Grid
           </button>
         </div>
       )}

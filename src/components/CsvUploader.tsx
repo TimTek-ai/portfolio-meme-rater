@@ -3,6 +3,7 @@
 import { useCallback } from "react";
 import Papa from "papaparse";
 import { parsePortfolioCsv } from "@/lib/portfolio";
+import { useToast } from "@/components/Toast";
 import type { PortfolioRow } from "@/types/portfolio";
 
 interface CsvUploaderProps {
@@ -10,6 +11,8 @@ interface CsvUploaderProps {
 }
 
 export function CsvUploader({ onUpload }: CsvUploaderProps) {
+  const { showToast } = useToast();
+
   const handleFileChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
@@ -24,15 +27,15 @@ export function CsvUploader({ onUpload }: CsvUploaderProps) {
         },
         error: (error) => {
           console.error("CSV parse error:", error);
-          alert("Failed to parse CSV file");
+          showToast("Failed to parse CSV file", "error");
         },
       });
     },
-    [onUpload]
+    [onUpload, showToast]
   );
 
   return (
-    <div className="border-2 border-dashed border-gray-600 rounded-lg p-8 text-center hover:border-gray-500 transition-colors">
+    <div className="card border-2 border-dashed border-gray-600 rounded-xl p-8 text-center hover:border-blue-500/50 transition-all cursor-pointer group">
       <label className="cursor-pointer">
         <input
           type="file"
@@ -40,8 +43,8 @@ export function CsvUploader({ onUpload }: CsvUploaderProps) {
           onChange={handleFileChange}
           className="hidden"
         />
-        <div className="space-y-2">
-          <div className="text-4xl">📈</div>
+        <div className="space-y-3">
+          <div className="text-5xl group-hover:animate-bounce-subtle transition-transform">📈</div>
           <p className="text-lg font-medium">Upload Portfolio CSV</p>
           <p className="text-sm text-gray-400">
             Expected columns: ticker, shares, purchasePrice, currentPrice

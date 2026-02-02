@@ -39,6 +39,33 @@ export const memeTemplates: MemeTemplate[] = [
     topText: "I am once again asking",
     bottomText: "{ticker} to keep printing ({return})",
   },
+  {
+    id: "52223189",
+    name: "Stonks",
+    url: "https://i.imgflip.com/2xrd32.jpg",
+    minReturn: 100,
+    maxReturn: Infinity,
+    topText: "{ticker} {return}",
+    bottomText: "STONKS",
+  },
+  {
+    id: "370867422",
+    name: "Chad Yes",
+    url: "https://i.imgflip.com/4aylx1.png",
+    minReturn: 100,
+    maxReturn: Infinity,
+    topText: "Bought {ticker}?",
+    bottomText: "Yes. {return}",
+  },
+  {
+    id: "284929871",
+    name: "They Don't Know",
+    url: "https://i.imgflip.com/4pn1an.png",
+    minReturn: 100,
+    maxReturn: Infinity,
+    topText: "They don't know",
+    bottomText: "I'm up {return} on {ticker}",
+  },
 
   // Huge gains (50-100%)
   {
@@ -77,6 +104,24 @@ export const memeTemplates: MemeTemplate[] = [
     topText: "Marked safe from",
     bottomText: "Being poor ({ticker} {return})",
   },
+  {
+    id: "247375501",
+    name: "Buff Doge vs Cheems",
+    url: "https://i.imgflip.com/43a45p.png",
+    minReturn: 50,
+    maxReturn: 100,
+    topText: "{ticker} holders",
+    bottomText: "Up {return}",
+  },
+  {
+    id: "226297822",
+    name: "Panik Kalm Panik",
+    url: "https://i.imgflip.com/3qqcim.png",
+    minReturn: 50,
+    maxReturn: 100,
+    topText: "{ticker} dipping - PANIK",
+    bottomText: "Now up {return} - KALM",
+  },
 
   // Great gains (20-50%)
   {
@@ -94,8 +139,8 @@ export const memeTemplates: MemeTemplate[] = [
     url: "https://i.imgflip.com/24y43o.jpg",
     minReturn: 20,
     maxReturn: 50,
-    topText: "{ticker} at {return} is",
-    bottomText: "The way",
+    topText: "{ticker} at {return}",
+    bottomText: "Change my mind",
   },
   {
     id: "112126428",
@@ -114,6 +159,24 @@ export const memeTemplates: MemeTemplate[] = [
     maxReturn: 50,
     topText: "My worries",
     bottomText: "{ticker} at {return}",
+  },
+  {
+    id: "178591752",
+    name: "Tuxedo Winnie the Pooh",
+    url: "https://i.imgflip.com/2ybua0.png",
+    minReturn: 20,
+    maxReturn: 50,
+    topText: "Index funds: +7% yearly",
+    bottomText: "{ticker}: {return}",
+  },
+  {
+    id: "93895088",
+    name: "Expanding Brain",
+    url: "https://i.imgflip.com/1jwhww.jpg",
+    minReturn: 20,
+    maxReturn: 50,
+    topText: "Savings account: 0.5%",
+    bottomText: "Galaxy brain: {ticker} {return}",
   },
 
   // Decent gains (10-20%)
@@ -178,11 +241,11 @@ export const memeTemplates: MemeTemplate[] = [
   {
     id: "27813981",
     name: "Hide the Pain Harold",
-    url: "https://i.imgflip.com/gk5el.jpg",
+    url: "https://i.imgflip.com/c0czl.jpg",
     minReturn: 0,
     maxReturn: 5,
     topText: "When {ticker} is only up {return}",
-    bottomText: "But you tell everyone you're winning",
+    bottomText: "But you tell everyone you're killing it",
   },
   {
     id: "101470",
@@ -269,6 +332,24 @@ export const memeTemplates: MemeTemplate[] = [
     topText: "You get {return} loss",
     bottomText: "Everyone holding {ticker} gets losses!",
   },
+  {
+    id: "250298947",
+    name: "Clown Putting on Makeup",
+    url: "https://i.imgflip.com/38el31.jpg",
+    minReturn: -25,
+    maxReturn: -10,
+    topText: "It's just a dip",
+    bottomText: "{ticker} {return}",
+  },
+  {
+    id: "371619279",
+    name: "Megamind No Bitches",
+    url: "https://i.imgflip.com/64sz4u.png",
+    minReturn: -25,
+    maxReturn: -10,
+    topText: "No gains?",
+    bottomText: "{ticker} {return}",
+  },
 
   // Big losses (-25% to -50%)
   {
@@ -307,6 +388,24 @@ export const memeTemplates: MemeTemplate[] = [
     topText: "The {ticker} losses",
     bottomText: "Are too damn high! ({return})",
   },
+  {
+    id: "240431713",
+    name: "Coffin Dance",
+    url: "https://i.imgflip.com/3sx9ct.jpg",
+    minReturn: -50,
+    maxReturn: -25,
+    topText: "{ticker} holders",
+    bottomText: "After {return}",
+  },
+  {
+    id: "91545132",
+    name: "This Is Fine",
+    url: "https://i.imgflip.com/1j3j4v.jpg",
+    minReturn: -50,
+    maxReturn: -25,
+    topText: "{ticker} down {return}",
+    bottomText: "This is fine",
+  },
 
   // Massive losses (-50%+)
   {
@@ -326,6 +425,24 @@ export const memeTemplates: MemeTemplate[] = [
     maxReturn: -50,
     topText: "Bought {ticker}",
     bottomText: "Now down {return}",
+  },
+  {
+    id: "252758727",
+    name: "Not Stonks",
+    url: "https://i.imgflip.com/30dj3p.jpg",
+    minReturn: -75,
+    maxReturn: -50,
+    topText: "{ticker} {return}",
+    bottomText: "NOT STONKS",
+  },
+  {
+    id: "259680905",
+    name: "Crying Cat",
+    url: "https://i.imgflip.com/3po4m7.jpg",
+    minReturn: -75,
+    maxReturn: -50,
+    topText: "Me checking {ticker}",
+    bottomText: "{return}",
   },
   {
     id: "61527",
@@ -352,7 +469,25 @@ export const memeTemplates: MemeTemplate[] = [
     minReturn: -Infinity,
     maxReturn: -75,
     topText: "{ticker} down {return}",
-    bottomText: "This is fine",
+    bottomText: "Everything is fine",
+  },
+  {
+    id: "79132341",
+    name: "GTA Wasted",
+    url: "https://i.imgflip.com/1bij8s.jpg",
+    minReturn: -Infinity,
+    maxReturn: -75,
+    topText: "{ticker} {return}",
+    bottomText: "WASTED",
+  },
+  {
+    id: "100777631",
+    name: "You Died Dark Souls",
+    url: "https://i.imgflip.com/1nck6k.jpg",
+    minReturn: -Infinity,
+    maxReturn: -75,
+    topText: "{ticker} {return}",
+    bottomText: "YOU DIED",
   },
 ];
 

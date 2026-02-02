@@ -33,19 +33,22 @@ export function SavedPortfolios({ onLoad }: SavedPortfoliosProps) {
     <div className="animate-fadeIn">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full py-3 px-4 bg-gray-800 hover:bg-gray-700 rounded-lg font-medium transition-all flex items-center justify-between"
+        className="w-full py-3 px-4 card rounded-xl font-medium transition-all flex items-center justify-between hover:border-blue-500/50"
       >
-        <span>Load Saved Portfolio</span>
-        <span className="text-gray-400 text-sm">{portfolios.length} saved</span>
+        <span className="flex items-center gap-2">
+          <span>📂</span>
+          Load Saved Portfolio
+        </span>
+        <span className="text-gray-400 text-sm bg-gray-700 px-2 py-0.5 rounded-full">{portfolios.length}</span>
       </button>
 
       {isOpen && (
-        <div className="mt-2 bg-gray-800 rounded-lg overflow-hidden animate-slideDown">
+        <div className="mt-2 card rounded-xl overflow-hidden animate-slideDown">
           {portfolios.map((portfolio, index) => (
             <button
               key={portfolio.id}
               onClick={() => handleLoad(portfolio)}
-              className="w-full p-3 hover:bg-gray-700 transition-all flex items-center justify-between border-b border-gray-700 last:border-0 animate-slideIn"
+              className="w-full p-4 hover:bg-gray-700/50 transition-all flex items-center justify-between border-b border-gray-700/50 last:border-0 animate-slideIn"
               style={{ animationDelay: `${index * 50}ms` }}
             >
               <div className="text-left">
@@ -56,7 +59,7 @@ export function SavedPortfolios({ onLoad }: SavedPortfoliosProps) {
               </div>
               <button
                 onClick={(e) => handleDelete(portfolio.id, e)}
-                className="p-1 text-gray-400 hover:text-red-400 transition-colors"
+                className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-all"
               >
                 ✕
               </button>

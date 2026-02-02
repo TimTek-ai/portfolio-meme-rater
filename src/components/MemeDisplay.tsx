@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback } from "react";
 import { selectMemeTemplate, formatMemeText, getMemeImageUrl } from "@/lib/imgflip";
+import { useToast } from "@/components/Toast";
 
 interface MemeDisplayProps {
   percentageReturn: number;
@@ -14,6 +15,7 @@ export function MemeDisplay({ percentageReturn, ticker }: MemeDisplayProps) {
   const [error, setError] = useState<string | null>(null);
   const [template, setTemplate] = useState(() => selectMemeTemplate(percentageReturn));
   const memeRef = useRef<HTMLDivElement>(null);
+  const { showToast } = useToast();
 
   const topText = formatMemeText(template.topText, percentageReturn, ticker);
   const bottomText = formatMemeText(template.bottomText, percentageReturn, ticker);
@@ -73,9 +75,9 @@ export function MemeDisplay({ percentageReturn, ticker }: MemeDisplayProps) {
       window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
     } else {
       await navigator.clipboard.writeText(text);
-      alert("Copied to clipboard!");
+      showToast("Copied to clipboard!", "success");
     }
-  }, [percentageReturn, ticker]);
+  }, [percentageReturn, ticker, showToast]);
 
   return (
     <div className="bg-gray-800 rounded-lg p-6 space-y-4">

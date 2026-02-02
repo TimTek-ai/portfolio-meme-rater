@@ -8,18 +8,76 @@ import { MemeEditor } from "@/components/MemeEditor";
 import { MemeGallery } from "@/components/MemeGallery";
 import { SavedPortfolios } from "@/components/SavedPortfolios";
 import { InstallPrompt } from "@/components/InstallPrompt";
+import { useToast } from "@/components/Toast";
 import { calculatePortfolioSummary } from "@/lib/portfolio";
 import { savePortfolio } from "@/lib/storage";
+import { useSound, SoundToggle } from "@/hooks/useSound";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import type { PortfolioRow, PortfolioSummary as Summary } from "@/types/portfolio";
 
-const samplePortfolio: PortfolioRow[] = [
-  { ticker: "NVDA", shares: 10, purchasePrice: 450, currentPrice: 890 },
-  { ticker: "BTC", shares: 0.5, purchasePrice: 30000, currentPrice: 45000 },
-  { ticker: "AAPL", shares: 25, purchasePrice: 142.5, currentPrice: 178.25 },
-  { ticker: "ETH", shares: 5, purchasePrice: 1800, currentPrice: 2400 },
-  { ticker: "TSLA", shares: 8, purchasePrice: 265, currentPrice: 175 },
-  { ticker: "SOL", shares: 50, purchasePrice: 20, currentPrice: 95 },
+// Asset pool for random portfolio generation
+const ASSET_POOL = [
+  // Stocks
+  { ticker: "NVDA", type: "stock", basePrice: 800, volatility: 0.4 },
+  { ticker: "AAPL", type: "stock", basePrice: 175, volatility: 0.15 },
+  { ticker: "TSLA", type: "stock", basePrice: 250, volatility: 0.35 },
+  { ticker: "MSFT", type: "stock", basePrice: 420, volatility: 0.12 },
+  { ticker: "GOOGL", type: "stock", basePrice: 170, volatility: 0.18 },
+  { ticker: "AMD", type: "stock", basePrice: 160, volatility: 0.3 },
+  { ticker: "META", type: "stock", basePrice: 500, volatility: 0.25 },
+  // Crypto
+  { ticker: "BTC", type: "crypto", basePrice: 95000, volatility: 0.5 },
+  { ticker: "ETH", type: "crypto", basePrice: 3500, volatility: 0.45 },
+  { ticker: "SOL", type: "crypto", basePrice: 180, volatility: 0.6 },
+  { ticker: "DOGE", type: "crypto", basePrice: 0.35, volatility: 0.7 },
+  { ticker: "PEPE", type: "crypto", basePrice: 0.00002, volatility: 0.8 },
+  { ticker: "XRP", type: "crypto", basePrice: 2.5, volatility: 0.4 },
+  // Commodities
+  { ticker: "GOLD", type: "commodity", basePrice: 2300, volatility: 0.1 },
+  { ticker: "SILVER", type: "commodity", basePrice: 28, volatility: 0.15 },
+  { ticker: "OIL", type: "commodity", basePrice: 75, volatility: 0.25 },
+  { ticker: "COPPER", type: "commodity", basePrice: 4.2, volatility: 0.2 },
+  { ticker: "NATGAS", type: "commodity", basePrice: 3.5, volatility: 0.35 },
+  { ticker: "PLATINUM", type: "commodity", basePrice: 1000, volatility: 0.18 },
+  { ticker: "WHEAT", type: "commodity", basePrice: 5.5, volatility: 0.22 },
 ];
+
+function generateRandomPortfolio(): PortfolioRow[] {
+  // Pick 4-8 random assets
+  const numAssets = Math.floor(Math.random() * 5) + 4;
+  const shuffled = [...ASSET_POOL].sort(() => Math.random() - 0.5);
+  const selected = shuffled.slice(0, numAssets);
+
+  return selected.map((asset) => {
+    // Generate random price movement (-50% to +150%)
+    const priceChange = (Math.random() * 2 - 0.5) * asset.volatility;
+    const currentMultiplier = 1 + priceChange;
+
+    // Purchase price was some time ago (simulate buying at different times)
+    const purchaseMultiplier = 1 + (Math.random() * 0.3 - 0.15);
+    const purchasePrice = asset.basePrice * purchaseMultiplier;
+    const currentPrice = asset.basePrice * currentMultiplier;
+
+    // Random share count based on price tier
+    let shares: number;
+    if (asset.basePrice > 10000) {
+      shares = Math.round((Math.random() * 2 + 0.1) * 100) / 100; // 0.1-2.1 for BTC
+    } else if (asset.basePrice > 100) {
+      shares = Math.floor(Math.random() * 50) + 5; // 5-55 shares
+    } else if (asset.basePrice > 1) {
+      shares = Math.floor(Math.random() * 500) + 50; // 50-550 shares
+    } else {
+      shares = Math.floor(Math.random() * 1000000) + 100000; // 100k-1.1M for micro-price assets
+    }
+
+    return {
+      ticker: asset.ticker,
+      shares,
+      purchasePrice: Math.round(purchasePrice * 100) / 100,
+      currentPrice: Math.round(currentPrice * 100) / 100,
+    };
+  });
+}
 
 type InputMode = "none" | "csv" | "ticker";
 
@@ -58,6 +116,32 @@ export function Confetti() {
   );
 }
 
+function ChartIcon() {
+  return (
+    <svg
+      className="w-10 h-10 md:w-12 md:h-12 animate-float"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="url(#gradient)"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <defs>
+        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#60a5fa" />
+          <stop offset="50%" stopColor="#a78bfa" />
+          <stop offset="100%" stopColor="#f472b6" />
+        </linearGradient>
+      </defs>
+      <path d="M3 3v18h18" />
+      <path d="M18 17V9" />
+      <path d="M13 17V5" />
+      <path d="M8 17v-3" />
+    </svg>
+  );
+}
+
 export default function Home() {
   const [inputMode, setInputMode] = useState<InputMode>("none");
   const [portfolioData, setPortfolioData] = useState<PortfolioRow[] | null>(null);
@@ -65,6 +149,8 @@ export default function Home() {
   const [showConfetti, setShowConfetti] = useState(false);
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [portfolioName, setPortfolioName] = useState("");
+  const { showToast } = useToast();
+  const { playForReturn } = useSound();
 
   const handleUpload = (rows: PortfolioRow[]) => {
     setPortfolioData(rows);
@@ -77,10 +163,13 @@ export default function Home() {
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 3000);
     }
+
+    // Play sound effect
+    playForReturn(newSummary.percentageReturn);
   };
 
   const handleSampleData = () => {
-    handleUpload(samplePortfolio);
+    handleUpload(generateRandomPortfolio());
   };
 
   const handleReset = () => {
@@ -94,7 +183,7 @@ export default function Home() {
       savePortfolio(portfolioName.trim(), portfolioData);
       setShowSaveModal(false);
       setPortfolioName("");
-      alert("Portfolio saved!");
+      showToast("Portfolio saved successfully!", "success");
     }
   };
 
@@ -103,12 +192,20 @@ export default function Home() {
       {showConfetti && <Confetti />}
 
       <div className="max-w-4xl mx-auto space-y-6">
-        <header className="text-center space-y-2 animate-fadeIn">
-          <h1 className="text-3xl md:text-4xl font-bold">
-            Portfolio Meme Rater
-          </h1>
-          <p className="text-gray-400">
-            Turn your gains (or losses) into memes
+        <header className="text-center space-y-4 animate-fadeIn header-bg py-6 relative">
+          <div className="absolute top-4 right-4 flex gap-2">
+            <ThemeToggle />
+            <SoundToggle />
+          </div>
+          <div className="flex items-center justify-center gap-3">
+            <ChartIcon />
+            <h1 className="text-3xl md:text-5xl font-bold gradient-text-animated">
+              Portfolio Meme Rater
+            </h1>
+          </div>
+          <p className="text-gray-400 text-lg">
+            Turn your <span className="text-green-400 font-medium">gains</span> (or{" "}
+            <span className="text-red-400 font-medium">losses</span>) into viral memes
           </p>
         </header>
 
@@ -119,24 +216,36 @@ export default function Home() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <button
                     onClick={() => setInputMode("ticker")}
-                    className="p-6 bg-gray-800 hover:bg-gray-700 rounded-lg text-left transition-all hover:scale-[1.02] active:scale-[0.98] animate-slideUp"
+                    className="input-card p-6 rounded-xl text-left animate-slideUp group"
                   >
-                    <div className="text-2xl mb-2">📈</div>
-                    <h3 className="font-bold mb-1">Enter Tickers</h3>
+                    <div className="text-3xl mb-3 group-hover:animate-bounce-subtle transition-transform">
+                      📈
+                    </div>
+                    <h3 className="font-bold text-lg mb-1">Enter Tickers</h3>
                     <p className="text-sm text-gray-400">
                       Stocks & crypto with live prices
                     </p>
+                    <div className="mt-3 flex gap-2 flex-wrap">
+                      <span className="badge badge-stock">Stocks</span>
+                      <span className="badge badge-crypto">Crypto</span>
+                      <span className="badge badge-commodity">Commodities</span>
+                    </div>
                   </button>
                   <button
                     onClick={() => setInputMode("csv")}
-                    className="p-6 bg-gray-800 hover:bg-gray-700 rounded-lg text-left transition-all hover:scale-[1.02] active:scale-[0.98] animate-slideUp"
+                    className="input-card p-6 rounded-xl text-left animate-slideUp group"
                     style={{ animationDelay: "50ms" }}
                   >
-                    <div className="text-2xl mb-2">📄</div>
-                    <h3 className="font-bold mb-1">Upload CSV</h3>
+                    <div className="text-3xl mb-3 group-hover:animate-bounce-subtle transition-transform">
+                      📄
+                    </div>
+                    <h3 className="font-bold text-lg mb-1">Upload CSV</h3>
                     <p className="text-sm text-gray-400">
                       Import from spreadsheet
                     </p>
+                    <div className="mt-3 text-xs text-gray-500">
+                      ticker, shares, purchase_price, current_price
+                    </div>
                   </button>
                 </div>
 
@@ -144,10 +253,11 @@ export default function Home() {
 
                 <button
                   onClick={handleSampleData}
-                  className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium transition-all hover:scale-[1.01] active:scale-[0.99] animate-slideUp animate-pulse-glow"
+                  className="w-full py-4 px-4 btn-primary rounded-xl font-medium transition-all hover:scale-[1.01] active:scale-[0.99] animate-slideUp text-lg"
                   style={{ animationDelay: "100ms" }}
                 >
-                  Try Demo Portfolio (Stocks + Crypto)
+                  Try Demo Portfolio
+                  <span className="text-sm opacity-80 ml-2">(Stocks + Crypto + Commodities)</span>
                 </button>
               </>
             )}
@@ -156,9 +266,9 @@ export default function Home() {
               <div className="space-y-4 animate-fadeIn">
                 <button
                   onClick={() => setInputMode("none")}
-                  className="text-sm text-gray-400 hover:text-white transition-colors"
+                  className="text-sm text-gray-400 hover:text-white transition-colors flex items-center gap-1"
                 >
-                  ← Back
+                  <span>←</span> Back
                 </button>
                 <TickerInput onSubmit={handleUpload} />
               </div>
@@ -168,9 +278,9 @@ export default function Home() {
               <div className="space-y-4 animate-fadeIn">
                 <button
                   onClick={() => setInputMode("none")}
-                  className="text-sm text-gray-400 hover:text-white transition-colors"
+                  className="text-sm text-gray-400 hover:text-white transition-colors flex items-center gap-1"
                 >
-                  ← Back
+                  <span>←</span> Back
                 </button>
                 <CsvUploader onUpload={handleUpload} />
               </div>
@@ -187,35 +297,35 @@ export default function Home() {
                 {/* Save Button */}
                 <button
                   onClick={() => setShowSaveModal(true)}
-                  className="w-full py-2 px-4 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm transition-all flex items-center justify-center gap-2"
+                  className="w-full py-3 px-4 card rounded-lg text-sm transition-all flex items-center justify-center gap-2 hover:border-blue-500/50"
                 >
                   <span>💾</span> Save Portfolio
                 </button>
 
                 {/* Save Modal */}
                 {showSaveModal && (
-                  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 animate-fadeIn">
-                    <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4 animate-scaleIn">
-                      <h3 className="font-bold mb-4">Save Portfolio</h3>
+                  <div className="fixed inset-0 modal-overlay flex items-center justify-center z-50 animate-fadeIn">
+                    <div className="card rounded-xl p-6 w-full max-w-md mx-4 animate-scaleIn">
+                      <h3 className="font-bold text-lg mb-4">Save Portfolio</h3>
                       <input
                         type="text"
                         placeholder="Portfolio name"
                         value={portfolioName}
                         onChange={(e) => setPortfolioName(e.target.value)}
-                        className="w-full px-3 py-2 bg-gray-700 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-3 bg-gray-700/50 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-600"
                         autoFocus
                       />
-                      <div className="flex gap-2">
+                      <div className="flex gap-3">
                         <button
                           onClick={() => setShowSaveModal(false)}
-                          className="flex-1 py-2 px-4 bg-gray-700 hover:bg-gray-600 rounded transition-colors"
+                          className="flex-1 py-3 px-4 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
                         >
                           Cancel
                         </button>
                         <button
                           onClick={handleSave}
                           disabled={!portfolioName.trim()}
-                          className="flex-1 py-2 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 rounded font-medium transition-colors"
+                          className="flex-1 py-3 px-4 btn-primary disabled:opacity-50 disabled:cursor-not-allowed rounded-lg font-medium transition-colors"
                         >
                           Save
                         </button>
@@ -259,7 +369,7 @@ export default function Home() {
 
             <button
               onClick={handleReset}
-              className="w-full py-2 px-4 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm transition-all hover:scale-[1.01] active:scale-[0.99]"
+              className="w-full py-3 px-4 bg-gray-700/50 hover:bg-gray-600/50 rounded-lg text-sm transition-all hover:scale-[1.01] active:scale-[0.99] border border-gray-600"
             >
               Start Over
             </button>
