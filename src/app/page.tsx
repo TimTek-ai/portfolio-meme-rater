@@ -11,6 +11,7 @@ import { InstallPrompt } from "@/components/InstallPrompt";
 import { useToast } from "@/components/Toast";
 import { RoastDisplay } from "@/components/RoastDisplay";
 import { Leaderboard } from "@/components/Leaderboard";
+import { PortfolioWrapped } from "@/components/PortfolioWrapped";
 import { calculatePortfolioSummary } from "@/lib/portfolio";
 import { savePortfolio } from "@/lib/storage";
 import { useSound, SoundToggle } from "@/hooks/useSound";
@@ -150,6 +151,7 @@ export default function Home() {
   const [summary, setSummary] = useState<Summary | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const [showSaveModal, setShowSaveModal] = useState(false);
+  const [showWrapped, setShowWrapped] = useState(false);
   const [portfolioName, setPortfolioName] = useState("");
   const { showToast } = useToast();
   const { playForReturn } = useSound();
@@ -192,6 +194,12 @@ export default function Home() {
   return (
     <main className="min-h-screen p-4 md:p-8">
       {showConfetti && <Confetti />}
+      {showWrapped && portfolioData && (
+        <PortfolioWrapped
+          holdings={portfolioData}
+          onClose={() => setShowWrapped(false)}
+        />
+      )}
 
       <div className="max-w-4xl mx-auto space-y-6">
         <header className="text-center space-y-4 animate-fadeIn header-bg py-6 relative">
@@ -296,13 +304,21 @@ export default function Home() {
                   <PortfolioSummary summary={summary} />
                 </div>
 
-                {/* Save Button */}
-                <button
-                  onClick={() => setShowSaveModal(true)}
-                  className="w-full py-3 px-4 card rounded-lg text-sm transition-all flex items-center justify-center gap-2 hover:border-blue-500/50"
-                >
-                  <span>💾</span> Save Portfolio
-                </button>
+                {/* Action Buttons */}
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={() => setShowSaveModal(true)}
+                    className="py-3 px-4 card rounded-lg text-sm transition-all flex items-center justify-center gap-2 hover:border-blue-500/50"
+                  >
+                    <span>💾</span> Save Portfolio
+                  </button>
+                  <button
+                    onClick={() => setShowWrapped(true)}
+                    className="py-3 px-4 bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 hover:opacity-90"
+                  >
+                    <span>✨</span> Portfolio Wrapped
+                  </button>
+                </div>
 
                 {/* Save Modal */}
                 {showSaveModal && (
