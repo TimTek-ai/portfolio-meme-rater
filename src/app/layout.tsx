@@ -5,8 +5,21 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Portfolio Meme Rater",
-  description: "Generate memes from your investment portfolio performance",
+  description: "Turn your portfolio gains and losses into viral memes. Made for r/wallstreetbets degenerates.",
   manifest: "/manifest.json",
+  openGraph: {
+    title: "Portfolio Meme Rater",
+    description: "Turn your portfolio gains and losses into viral memes 📈📉",
+    url: "https://portfolio-meme-rater.vercel.app",
+    siteName: "Portfolio Meme Rater",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Portfolio Meme Rater",
+    description: "Turn your portfolio gains and losses into viral memes 📈📉",
+  },
+  keywords: ["meme generator", "wallstreetbets", "stocks", "portfolio", "investing", "loss porn", "gains"],
 };
 
 export const viewport: Viewport = {
