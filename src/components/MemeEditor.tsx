@@ -193,14 +193,14 @@ export function MemeEditor({ percentageReturn, ticker }: MemeEditorProps) {
           if (navigator.canShare && navigator.canShare({ files: [file] })) {
             await navigator.share({
               title: "Portfolio Meme",
-              text,
+              text: shareText,
               files: [file],
             });
           } else {
             // Fallback to text-only share
             await navigator.share({
               title: "Portfolio Meme",
-              text,
+              text: shareText,
             });
           }
           showToast("Shared successfully!", "success");
