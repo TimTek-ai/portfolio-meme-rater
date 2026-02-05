@@ -1,39 +1,46 @@
 # Next Session TODO
 
-> Last updated: Feb 2, 2026
+> Last updated: Feb 5, 2026
 
-## Priority 1: Deploy & Launch
-- [ ] Deploy to Vercel for permanent URL
-- [ ] Add OG meta tags (title, description, image) for link previews
-- [ ] Test all features on production
+## Priority 1: Polish the New Tab UI
+- [ ] Add icons to tab labels
+- [ ] Make tabs sticky on scroll (mobile)
+- [ ] Add count badges to tabs (e.g., "Memes (8)")
+- [ ] Persist active tab state on refresh
 
-## Priority 2: Marketing Push
-- [ ] Post to r/wallstreetbets with a loss meme
-- [ ] Post to r/SideProject for dev community feedback
-- [ ] Create Twitter account for the app
-- [ ] Tweet launch announcement with demo meme
+## Priority 2: Mobile Experience
+- [ ] Improve touch interactions on meme editor
+- [ ] Better responsive layout for small screens
+- [ ] Test on actual mobile devices
 
-## Priority 3: Analytics & Tracking
-- [ ] Add Vercel Analytics or Plausible
-- [ ] Track which features are most used
-- [ ] Track share button clicks
+## Priority 3: Share Features
+- [ ] Direct share buttons for generated memes (Twitter, Reddit, Discord)
+- [ ] Copy meme image to clipboard
+- [ ] Share roast text directly
 
 ## Priority 4: New Features
-- [ ] Daily market meme bot (auto-generates memes from market movers)
-- [ ] Discord community setup
-- [ ] Email capture for updates
+- [ ] Portfolio comparison (side-by-side)
 - [ ] More meme templates
+- [ ] Custom background upload for memes
 - [ ] GIF export option
+- [ ] Daily market meme bot
 
-## Priority 5: Polish
-- [ ] Improve mobile responsiveness
-- [ ] Add loading states for slow connections
-- [ ] Error boundaries for graceful failures
-- [ ] PWA offline support improvements
+## Priority 5: Analytics & Marketing
+- [ ] Add Vercel Analytics
+- [ ] Track feature usage
+- [ ] Post to r/wallstreetbets
+- [ ] Create Twitter account
 
 ---
 
-## Completed (This Session - Feb 2)
+## Completed (Session - Feb 5)
+- [x] Simplified UI - removed glows, gradients, glass effects
+- [x] Added 3-tab navigation (Summary, Memes, Leaderboard)
+- [x] Removed sound effects
+- [x] Made RoastDisplay more compact
+- [x] Deployed to Vercel production
+
+## Completed (Session - Feb 2)
 - [x] Portfolio Wrapped (Spotify-style year review)
 - [x] Custom meme upload feature
 - [x] Roast My Portfolio AI mode
@@ -42,12 +49,12 @@
 - [x] Enhanced Twitter/Reddit sharing with hashtags
 - [x] Watermark branding on downloads
 - [x] Theme toggle (dark/light)
-- [x] Sound effects for gains/losses
+- [x] Sound effects for gains/losses (removed Feb 5)
 - [x] Commodity support (gold, silver, oil, etc.)
+- [x] OG meta tags for social sharing
 
 ---
 
 ## Links
 - **GitHub:** https://github.com/TimTek-ai/portfolio-meme-rater
-- **Temp URL:** (cloudflare tunnel - expires)
-- **Prod URL:** TBD (deploy to Vercel next session)
+- **Prod URL:** https://portfolio-meme-rater.vercel.app
