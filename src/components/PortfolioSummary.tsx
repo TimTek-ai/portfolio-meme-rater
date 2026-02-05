@@ -123,7 +123,7 @@ export function PortfolioSummary({ summary }: PortfolioSummaryProps) {
           <AnimatedPercent
             value={summary.percentageReturn}
             duration={1200}
-            className={`text-2xl font-bold ${returnColor} ${summary.percentageReturn >= 0 ? "gain-glow" : "loss-glow"}`}
+            className={`text-2xl font-bold ${returnColor}`}
           />
         </div>
       </div>

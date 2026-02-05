@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 interface RoastDisplayProps {
   percentageReturn: number;
@@ -42,13 +42,13 @@ export function RoastDisplay({ percentageReturn, ticker }: RoastDisplayProps) {
   };
 
   const tierColors: Record<string, string> = {
-    catastrophic: "from-red-600 to-red-800",
-    terrible: "from-red-500 to-orange-600",
-    bad: "from-orange-500 to-yellow-600",
-    meh: "from-gray-500 to-gray-600",
-    decent: "from-green-500 to-emerald-600",
-    good: "from-emerald-500 to-teal-600",
-    legendary: "from-yellow-400 to-amber-500",
+    catastrophic: "bg-red-900/50",
+    terrible: "bg-red-800/50",
+    bad: "bg-orange-800/50",
+    meh: "bg-gray-700/50",
+    decent: "bg-green-800/50",
+    good: "bg-emerald-800/50",
+    legendary: "bg-amber-700/50",
   };
 
   const tierEmoji: Record<string, string> = {
@@ -66,59 +66,50 @@ export function RoastDisplay({ percentageReturn, ticker }: RoastDisplayProps) {
       <button
         onClick={fetchRoast}
         disabled={loading}
-        className="w-full py-3 px-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+        className="py-2 px-4 bg-gray-700/50 hover:bg-gray-600/50 rounded-lg text-sm transition-colors flex items-center gap-2 disabled:opacity-50"
       >
         {loading ? (
           <>
-            <span className="animate-spin">⏳</span> Generating roast...
+            <span className="animate-spin">⏳</span> Generating...
           </>
         ) : (
-          <>
-            🔥 Roast My Portfolio
-          </>
+          "Roast My Portfolio"
         )}
       </button>
     );
   }
 
   return (
-    <div className={`relative overflow-hidden rounded-xl p-4 bg-gradient-to-r ${tierColors[roast?.tier || "meh"]} animate-fadeIn`}>
-      <div className="absolute inset-0 bg-black/30" />
-      <div className="relative z-10">
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-2xl">{tierEmoji[roast?.tier || "meh"]}</span>
-          <span className="text-xs uppercase tracking-wider opacity-80">AI Roast</span>
-        </div>
-        <p className="text-white font-medium text-lg leading-relaxed">
+    <div className={`rounded-lg p-3 ${tierColors[roast?.tier || "meh"]} border border-gray-600 animate-fadeIn`}>
+      <div className="flex items-start gap-2">
+        <span className="text-lg">{tierEmoji[roast?.tier || "meh"]}</span>
+        <p className="text-sm text-gray-200 flex-1">
           &ldquo;{roast?.roast}&rdquo;
         </p>
-        <div className="flex gap-2 mt-3">
-          <button
-            onClick={getNewRoast}
-            disabled={loading}
-            className="py-2 px-3 bg-white/20 hover:bg-white/30 rounded-lg text-sm transition-all disabled:opacity-50"
-          >
-            🎲 Another Roast
-          </button>
-          <button
-            onClick={() => {
-              const text = `"${roast?.roast}" - My portfolio is ${percentageReturn >= 0 ? "up" : "down"} ${Math.abs(percentageReturn).toFixed(1)}%! 🔥\n\nGet roasted at portfoliomemer.app #WallStreetBets #Roasted`;
-              navigator.clipboard.writeText(text);
-            }}
-            className="py-2 px-3 bg-white/20 hover:bg-white/30 rounded-lg text-sm transition-all"
-          >
-            📋 Copy
-          </button>
-          <button
-            onClick={() => {
-              const text = `"${roast?.roast}" - My portfolio is ${percentageReturn >= 0 ? "up" : "down"} ${Math.abs(percentageReturn).toFixed(1)}%! 🔥\n\nGet roasted at portfoliomemer.app #WallStreetBets #Roasted`;
-              window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
-            }}
-            className="py-2 px-3 bg-white/20 hover:bg-white/30 rounded-lg text-sm transition-all"
-          >
-            𝕏 Tweet
-          </button>
-        </div>
+      </div>
+      <div className="flex gap-2 mt-2">
+        <button
+          onClick={getNewRoast}
+          disabled={loading}
+          className="py-1 px-2 bg-gray-600/50 hover:bg-gray-500/50 rounded text-xs transition-colors disabled:opacity-50"
+        >
+          Another
+        </button>
+        <button
+          onClick={() => {
+            const text = `"${roast?.roast}" - My portfolio is ${percentageReturn >= 0 ? "up" : "down"} ${Math.abs(percentageReturn).toFixed(1)}%!`;
+            navigator.clipboard.writeText(text);
+          }}
+          className="py-1 px-2 bg-gray-600/50 hover:bg-gray-500/50 rounded text-xs transition-colors"
+        >
+          Copy
+        </button>
+        <button
+          onClick={() => setIsVisible(false)}
+          className="py-1 px-2 bg-gray-600/50 hover:bg-gray-500/50 rounded text-xs transition-colors"
+        >
+          Hide
+        </button>
       </div>
     </div>
   );

@@ -14,7 +14,6 @@ import { Leaderboard } from "@/components/Leaderboard";
 import { PortfolioWrapped } from "@/components/PortfolioWrapped";
 import { calculatePortfolioSummary } from "@/lib/portfolio";
 import { savePortfolio } from "@/lib/storage";
-import { useSound, SoundToggle } from "@/hooks/useSound";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import type { PortfolioRow, PortfolioSummary as Summary } from "@/types/portfolio";
 
@@ -83,6 +82,7 @@ function generateRandomPortfolio(): PortfolioRow[] {
 }
 
 type InputMode = "none" | "csv" | "ticker";
+type TabName = "summary" | "memes" | "leaderboard";
 
 export function Confetti() {
   const [particles, setParticles] = useState<{ id: number; left: number; color: string }[]>([]);
@@ -122,21 +122,14 @@ export function Confetti() {
 function ChartIcon() {
   return (
     <svg
-      className="w-10 h-10 md:w-12 md:h-12 animate-float"
+      className="w-10 h-10 md:w-12 md:h-12"
       viewBox="0 0 24 24"
       fill="none"
-      stroke="url(#gradient)"
+      stroke="#3b82f6"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <defs>
-        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#60a5fa" />
-          <stop offset="50%" stopColor="#a78bfa" />
-          <stop offset="100%" stopColor="#f472b6" />
-        </linearGradient>
-      </defs>
       <path d="M3 3v18h18" />
       <path d="M18 17V9" />
       <path d="M13 17V5" />
@@ -153,23 +146,21 @@ export default function Home() {
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [showWrapped, setShowWrapped] = useState(false);
   const [portfolioName, setPortfolioName] = useState("");
+  const [activeTab, setActiveTab] = useState<TabName>("summary");
   const { showToast } = useToast();
-  const { playForReturn } = useSound();
 
   const handleUpload = (rows: PortfolioRow[]) => {
     setPortfolioData(rows);
     const newSummary = calculatePortfolioSummary(rows);
     setSummary(newSummary);
     setInputMode("none");
+    setActiveTab("summary");
 
     // Show confetti for big gains
     if (newSummary.percentageReturn > 20) {
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 3000);
     }
-
-    // Play sound effect
-    playForReturn(newSummary.percentageReturn);
   };
 
   const handleSampleData = () => {
@@ -202,20 +193,19 @@ export default function Home() {
       )}
 
       <div className="max-w-4xl mx-auto space-y-6">
-        <header className="text-center space-y-4 animate-fadeIn header-bg py-6 relative">
+        <header className="text-center space-y-4 animate-fadeIn py-6 relative">
           <div className="absolute top-4 right-4 flex gap-2">
             <ThemeToggle />
-            <SoundToggle />
           </div>
           <div className="flex items-center justify-center gap-3">
             <ChartIcon />
-            <h1 className="text-3xl md:text-5xl font-bold gradient-text-animated">
+            <h1 className="text-3xl md:text-5xl font-bold text-blue-500">
               Portfolio Meme Rater
             </h1>
           </div>
           <p className="text-gray-400 text-lg">
-            Turn your <span className="text-green-400 font-medium">gains</span> (or{" "}
-            <span className="text-red-400 font-medium">losses</span>) into viral memes
+            Turn your <span className="text-green-500 font-medium">gains</span> (or{" "}
+            <span className="text-red-500 font-medium">losses</span>) into viral memes
           </p>
         </header>
 
@@ -300,25 +290,92 @@ export default function Home() {
           <div className="space-y-6 animate-fadeIn">
             {summary && (
               <>
-                <div className="animate-scaleIn">
-                  <PortfolioSummary summary={summary} />
+                {/* Tab Navigation */}
+                <div className="border-b border-gray-700">
+                  <nav className="flex gap-8">
+                    {[
+                      { id: "summary" as TabName, label: "Summary" },
+                      { id: "memes" as TabName, label: "Memes" },
+                      { id: "leaderboard" as TabName, label: "Leaderboard" },
+                    ].map((tab) => (
+                      <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id)}
+                        className={`pb-3 text-sm font-medium transition-colors relative ${
+                          activeTab === tab.id
+                            ? "text-blue-500"
+                            : "text-gray-400 hover:text-gray-200"
+                        }`}
+                      >
+                        {tab.label}
+                        {activeTab === tab.id && (
+                          <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500" />
+                        )}
+                      </button>
+                    ))}
+                  </nav>
                 </div>
 
-                {/* Action Buttons */}
-                <div className="grid grid-cols-2 gap-3">
-                  <button
-                    onClick={() => setShowSaveModal(true)}
-                    className="py-3 px-4 card rounded-lg text-sm transition-all flex items-center justify-center gap-2 hover:border-blue-500/50"
-                  >
-                    <span>💾</span> Save Portfolio
-                  </button>
-                  <button
-                    onClick={() => setShowWrapped(true)}
-                    className="py-3 px-4 bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 hover:opacity-90"
-                  >
-                    <span>✨</span> Portfolio Wrapped
-                  </button>
-                </div>
+                {/* Tab Content */}
+                {activeTab === "summary" && (
+                  <div className="space-y-6">
+                    <div className="animate-scaleIn">
+                      <PortfolioSummary summary={summary} />
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        onClick={() => setShowSaveModal(true)}
+                        className="py-3 px-4 card rounded-lg text-sm transition-all flex items-center justify-center gap-2 hover:border-blue-500/50"
+                      >
+                        Save Portfolio
+                      </button>
+                      <button
+                        onClick={() => setShowWrapped(true)}
+                        className="py-3 px-4 bg-purple-600 hover:bg-purple-500 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2"
+                      >
+                        Portfolio Wrapped
+                      </button>
+                    </div>
+
+                    {/* Roast My Portfolio - Minimized */}
+                    <RoastDisplay percentageReturn={summary.percentageReturn} />
+                  </div>
+                )}
+
+                {activeTab === "memes" && (
+                  <div className="space-y-6">
+                    {/* Overall Portfolio Meme with Editor */}
+                    <MemeEditor percentageReturn={summary.percentageReturn} />
+
+                    {/* Export Options */}
+                    <MemeGallery summary={summary} />
+
+                    {/* Individual Holdings */}
+                    <div className="space-y-4">
+                      <h2 className="text-xl font-bold">Individual Holdings</h2>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {summary.holdings
+                          .sort((a, b) => b.percentageGain - a.percentageGain)
+                          .map((holding) => (
+                            <MemeEditor
+                              key={holding.ticker}
+                              percentageReturn={holding.percentageGain}
+                              ticker={holding.ticker}
+                            />
+                          ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === "leaderboard" && (
+                  <Leaderboard
+                    currentReturn={summary.percentageReturn}
+                    currentTicker={summary.holdings.length === 1 ? summary.holdings[0].ticker : undefined}
+                  />
+                )}
 
                 {/* Save Modal */}
                 {showSaveModal && (
@@ -351,56 +408,12 @@ export default function Home() {
                     </div>
                   </div>
                 )}
-
-                {/* Roast My Portfolio */}
-                <div className="animate-slideUp" style={{ animationDelay: "100ms" }}>
-                  <RoastDisplay percentageReturn={summary.percentageReturn} />
-                </div>
-
-                {/* Overall Portfolio Meme with Editor */}
-                <div className="animate-slideUp" style={{ animationDelay: "150ms" }}>
-                  <MemeEditor percentageReturn={summary.percentageReturn} />
-                </div>
-
-                {/* Export Options */}
-                <div className="animate-slideUp" style={{ animationDelay: "200ms" }}>
-                  <MemeGallery summary={summary} />
-                </div>
-
-                {/* Hall of Shame Leaderboard */}
-                <div className="animate-slideUp" style={{ animationDelay: "250ms" }}>
-                  <Leaderboard
-                    currentReturn={summary.percentageReturn}
-                    currentTicker={summary.holdings.length === 1 ? summary.holdings[0].ticker : undefined}
-                  />
-                </div>
-
-                {/* Individual Holdings */}
-                <div className="space-y-4">
-                  <h2 className="text-xl font-bold">Individual Holdings</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {summary.holdings
-                      .sort((a, b) => b.percentageGain - a.percentageGain)
-                      .map((holding, index) => (
-                        <div
-                          key={holding.ticker}
-                          className="animate-slideUp"
-                          style={{ animationDelay: `${200 + index * 50}ms` }}
-                        >
-                          <MemeEditor
-                            percentageReturn={holding.percentageGain}
-                            ticker={holding.ticker}
-                          />
-                        </div>
-                      ))}
-                  </div>
-                </div>
               </>
             )}
 
             <button
               onClick={handleReset}
-              className="w-full py-3 px-4 bg-gray-700/50 hover:bg-gray-600/50 rounded-lg text-sm transition-all hover:scale-[1.01] active:scale-[0.99] border border-gray-600"
+              className="w-full py-3 px-4 bg-gray-700/50 hover:bg-gray-600/50 rounded-lg text-sm transition-all border border-gray-600"
             >
               Start Over
             </button>
